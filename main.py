@@ -21,6 +21,7 @@ clear message instead of shipping an image the gate would reject.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import shutil
 import struct
@@ -159,6 +160,9 @@ def main(argv: list[str] | None = None) -> int:
     os.replace(staging, target)
 
     print("verified %s: whole PNG, %d bytes, %dx%d" % (source.name, size, width, height))
+    # The digest makes a run auditable: the same committed image must produce the
+    # same stamp on any machine, and a second run is comparable without a diff.
+    print("sha256 %s" % hashlib.sha256(target.read_bytes()).hexdigest())
     print("copied to %s" % target)
     return 0
 
